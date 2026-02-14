@@ -25,35 +25,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Pin Node (LTS)
-      - name: Setup Node
+      - name: Setup Node (LTS)
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      # Install pnpm (this makes pnpm available in PATH)
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: "9.15.4"
+          version: 9
 
-      # Now pnpm exists, so caching pnpm store works
-      - name: Enable pnpm cache
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "pnpm"
-
-      - name: Show versions
+      - name: Create temporary package.json
         run: |
-          node --version
-          pnpm --version
-
-      # Create a tiny manifest if you didn't commit one
-      - name: Ensure deps manifest
-        run: |
-          if [ ! -f package.json ]; then
-            cat > package.json <<'JSON'
+          cat > package.json <<'JSON'
           {
             "name": "gallery-image-processor",
             "private": true,
@@ -64,17 +48,15 @@ jobs:
             }
           }
           JSON
-          fi
 
-      - name: Install dependencies (pnpm)
-        run: pnpm install --no-frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Optimize images and rebuild index
         run: node .github/scripts/optimize-images.js
 
       - name: Commit generated assets (if changed)
         run: |
-          set -e
           if [[ -n "$(git status --porcelain)" ]]; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
