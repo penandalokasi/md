@@ -19,18 +19,24 @@
           <div class="brand-text">
             <h1 class="site-title">MD Gallery</h1>
             <p class="site-subtitle">
-              Tap any thumbnail to view optimized media. Use <strong>Copy URL</strong> to copy the public link to the original file in <code>images/</code>.
+              Tap a thumbnail to preview. Use <strong>Copy URL</strong> to copy the original link.
             </p>
           </div>
         </div>
 
         <div class="controls" aria-label="Gallery controls">
-          <label class="control">
+                    <div class="control">
             <span class="control-label">Year</span>
-            <select id="yearFilter" class="control-input" aria-label="Filter by year">
-              <option value="all">All</option>
-            </select>
-          </label>
+            <div class="yearFilter" id="yearFilter">
+              <button class="yearBtn" id="yearBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span id="yearLabel">All years</span>
+                <svg class="chev" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="currentColor" d="M7 10l5 5 5-5z"></path>
+                </svg>
+              </button>
+              <div class="yearMenu" id="yearMenu" role="listbox" aria-label="Filter by year" aria-hidden="true"></div>
+            </div>
+          </div>
 
           <div class="meta">
             <span id="countLabel" class="count" aria-live="polite"></span>
@@ -47,14 +53,6 @@
 
     <!-- Lightbox is populated by script.js -->
     <div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="Media viewer"></div>
-
-    <footer class="site-footer">
-      <div class="container footer-row">
-        <span class="footer-note">Static, GitHub Pages–safe.</span>
-        <a class="footer-link" href="README.md">How to add images</a>
-      </div>
-    </footer>
-
-    <script type="module" src="script.js"></script>
+<script type="module" src="script.js"></script>
   </body>
 </html>
