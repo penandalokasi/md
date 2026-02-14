@@ -322,15 +322,16 @@ code{ font-family: var(--mono); font-size: .95em; }
 }
 
 .lightbox__bar{
-  display:flex;
+  display:grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items:center;
-  justify-content: space-between;
   gap: 10px;
   padding: 12px 14px;
   border-bottom: 1px solid var(--border);
 }
 
 .lightbox__title{
+  min-width:0;
   min-width: 0;
   display:flex;
   flex-direction: column;
@@ -352,8 +353,23 @@ code{ font-family: var(--mono); font-size: .95em; }
 .lightbox__actions{
   display:flex;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-end;
+  align-items:center;
+}
+
+.lightbox__actions .btn{
+  white-space: nowrap;
+}
+
+@media (max-width: 520px){
+  .lightbox__actions{
+    max-width: 52vw;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .lightbox__actions::-webkit-scrollbar{ display:none; }
 }
 
 .btn{
