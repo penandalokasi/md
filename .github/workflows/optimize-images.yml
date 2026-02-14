@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  process:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,19 +25,42 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Pin Node to avoid npm CI bugs like "Exit handler never called!"
+      # Avoid npm CLI bug: "Exit handler never called!"
+      # Use Node LTS + pnpm (via Corepack).
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
+          cache: "pnpm"
 
-      # Workaround for flaky npm versions on runners
-      - name: Pin npm
-        run: npm i -g npm@10
+      - name: Enable Corepack (pnpm)
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm --version
+          node --version
 
-      - name: Install dependencies
-        run: npm install --no-audit --no-fund sharp glob
+      # Create a tiny package.json if you don't want to commit one.
+      # (If you later add your own package.json, this step will keep it.)
+      - name: Ensure deps manifest
+        run: |
+          if [ ! -f package.json ]; then
+            cat > package.json <<'JSON'
+          {
+            "name": "gallery-image-processor",
+            "private": true,
+            "type": "module",
+            "dependencies": {
+              "sharp": "^0.33.5",
+              "glob": "^10.4.5"
+            }
+          }
+          JSON
+          fi
+
+      - name: Install dependencies (pnpm)
+        run: |
+          pnpm install --no-frozen-lockfile
 
       - name: Optimize images and rebuild index
         run: node .github/scripts/optimize-images.js
