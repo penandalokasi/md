@@ -1,0 +1,46 @@
+name: Optimize and Generate Thumbnails
+
+on:
+  push:
+    paths:
+      - "images/**"
+  workflow_dispatch:
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Install full FFmpeg
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ffmpeg -version
+
+      # 3. Set up Node.js (no caching)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 4. Install dependencies (Sharp + glob)
+      - name: Install dependencies
+        run: npm install sharp glob
+
+      # 5. Run your optimization script
+      - name: Run image optimization script
+        run: node .github/scripts/optimize-images.js
+
+      # 6. Commit optimized outputs
+      - name: Commit optimized results
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add images-optimized images-thumbs index.json || true
+          git commit -m "Optimize images & generate thumbnails [skip ci]" || echo "No changes to commit"
+          git push
