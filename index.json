@@ -70,5 +70,15 @@
       "jpg": "images-thumbs/2025-05-12.01.jpg"
     },
     "format": "image"
+  },
+  {
+    "original": "images/2025-12-24.01.gif",
+    "optimized": {
+      "webm": "images-optimized/2025-12-24.01.webm"
+    },
+    "thumbnail": {
+      "webm": "images-thumbs/2025-12-24.01.webm"
+    },
+    "format": "webm"
   }
 ]
