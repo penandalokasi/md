@@ -67,7 +67,9 @@ code{ font-family: var(--mono); font-size: .95em; }
 .container{
   max-width: var(--max);
   margin: 0 auto;
-  padding: 0 18px;
+  /* Keep UI away from device edges (supports notches / safe areas) */
+  padding-left: max(18px, env(safe-area-inset-left));
+  padding-right: max(18px, env(safe-area-inset-right));
 }
 
 .skip-link{
@@ -637,3 +639,37 @@ code{ font-family: var(--mono); font-size: .95em; }
     max-height: 78vh;
   }
 }
+
+/* ===== Mobile spacing + nav centering fixes (v4) ===== */
+
+/* 1) Lightbox arrows: truly center the glyph inside the circle */
+.lightbox__nav button{
+  display: grid;
+  place-items: center;
+  padding: 0;
+  line-height: 1;
+}
+
+/* If your arrow glyph still looks off-center on some Android builds,
+   nudging by 0.5px helps without being noticeable elsewhere. */
+.lightbox__nav button .arrow,
+.lightbox__nav button span{
+  display: inline-block;
+  transform: translateY(-0.5px);
+}
+
+/* 2) Give controls a bit more breathing room on small screens */
+@media (max-width: 520px){
+  .container{
+    padding-left: max(22px, env(safe-area-inset-left));
+    padding-right: max(22px, env(safe-area-inset-right));
+  }
+  .header-row{
+    padding: 14px 0;
+  }
+  .controls{
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
