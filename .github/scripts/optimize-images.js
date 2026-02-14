@@ -111,7 +111,7 @@ for (const file of orderedFiles) {
         "-i", file,
         "-vf", "fps=30,scale='min(1280,iw)':-2:flags=lanczos",
         "-vf",
-        "fps=15,scale=480:480:force_original_aspect_ratio=increase,crop=480:480,setsar=1",
+        "fps=15,scale=360:360:force_original_aspect_ratio=increase,crop=360:360,setsar=1",
         "-t", "3",
         "-pix_fmt", "yuv420p",
         "-c:v", "libvpx",
