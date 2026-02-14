@@ -67,9 +67,9 @@ code{ font-family: var(--mono); font-size: .95em; }
 .container{
   max-width: var(--max);
   margin: 0 auto;
-  /* Keep UI away from device edges (supports notches / safe areas) */
-  padding-left: max(18px, env(safe-area-inset-left));
-  padding-right: max(18px, env(safe-area-inset-right));
+  /* Align with grid rhythm */
+  padding-left: max(var(--gap), env(safe-area-inset-left));
+  padding-right: max(var(--gap), env(safe-area-inset-right));
 }
 
 .skip-link{
@@ -403,16 +403,19 @@ code{ font-family: var(--mono); font-size: .95em; }
   position:relative;
   display:grid;
   place-items:center;
-  padding: 10px;
+  /* breathing room so media never visually eats the rounded panel corner */
+  padding: 16px;
   overflow:hidden;
-
   min-height: 0;
 }
 .lightbox__media{
-  max-width: 100%;
-  max-height: 100%;
+  /* keep media comfortably inside the panel */
+  max-width: calc(100% - 24px);
+  max-height: calc(100% - 24px);
   width: auto;
   height: auto;
+  object-fit: contain;
+  display:block;
   border-radius: 16px;
   background: rgba(0,0,0,.12);
 }
@@ -435,6 +438,12 @@ code{ font-family: var(--mono); font-size: .95em; }
   background: rgba(0,0,0,.35);
   color: rgba(255,255,255,.92);
   cursor:pointer;
+
+  /* center the arrow glyph consistently across browsers */
+  display: grid;
+  place-items: center;
+  padding: 0;
+  line-height: 1;
 }
 @media (prefers-color-scheme: light){
   .lightbox__nav button{ background: rgba(255,255,255,.75); color: rgba(0,0,0,.85); }
@@ -640,73 +649,21 @@ code{ font-family: var(--mono); font-size: .95em; }
   }
 }
 
-/* ===== Mobile spacing + nav centering fixes (v4) ===== */
-
-/* 1) Lightbox arrows: truly center the glyph inside the circle */
-.lightbox__nav button{
-  display: grid;
-  place-items: center;
-  padding: 0;
-  line-height: 1;
-}
-
-/* If your arrow glyph still looks off-center on some Android builds,
-   nudging by 0.5px helps without being noticeable elsewhere. */
-.lightbox__nav button .arrow,
-.lightbox__nav button span{
-  display: inline-block;
-  transform: translateY(-0.5px);
-}
-
-/* 2) Give controls a bit more breathing room on small screens */
+/* ---- Mobile refinements ---- */
 @media (max-width: 520px){
   .container{
-    padding-left: max(22px, env(safe-area-inset-left));
-    padding-right: max(22px, env(safe-area-inset-right));
+    padding-left: max(var(--gap), env(safe-area-inset-left));
+    padding-right: max(var(--gap), env(safe-area-inset-right));
   }
-  .header-row{
-    padding: 14px 0;
+
+  .lightbox__panel{
+    max-height: 92vh;
   }
-  .controls{
-    width: 100%;
-    justify-content: flex-start;
+  .lightbox__stage{
+    padding: 14px;
   }
-}
-
-
-
-/* ===== Patch v5: lightbox arrow centering + media containment ===== */
-
-/* Center the nav glyph perfectly inside the circle across browsers */
-.lightbox__nav button{
-  display: grid;
-  place-items: center;
-  padding: 0;
-  text-align: center;
-}
-
-/* Some fonts render ‹ › slightly low; nudge up a hair */
-.lightbox__nav button{
-  line-height: 1;
-}
-.lightbox__nav button::before{
-  /* no-op if buttons already contain text; avoids changing layout */
-  content: "";
-  display: none;
-}
-
-/* Make sure media can never bleed into the panel edge; keep rounded corners visible */
-.lightbox__stage{
-  box-sizing: border-box;
-  padding: 14px; /* a bit more breathing room */
-}
-
-.lightbox__media{
-  display: block;
-  box-sizing: border-box;
-  object-fit: contain;
-  max-width: calc(100% - 4px);
-  max-height: calc(100% - 4px);
-  justify-self: center;
-  align-self: center;
+  .lightbox__media{
+    max-width: calc(100% - 20px);
+    max-height: 70vh;
+  }
 }
