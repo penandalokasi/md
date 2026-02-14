@@ -667,3 +667,35 @@ code{ font-family: var(--mono); font-size: .95em; }
     max-height: 70vh;
   }
 }
+
+/* ===== Absolute final lightbox centering fix ===== */
+
+/* True centering for stage */
+.lightbox__stage{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative;
+}
+
+/* Media must not touch panel edges and must stay centered */
+.lightbox__media{
+  display: block;
+  margin: auto;
+  max-width: calc(100% - 32px);
+  max-height: calc(100% - 32px);
+  object-fit: contain;
+}
+
+/* Nav arrows must not influence layout */
+.lightbox__nav{
+  pointer-events: none;
+}
+
+.lightbox__nav button{
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
