@@ -153,7 +153,7 @@ for (const file of orderedFiles) {
       full.clone().jpeg({ quality: 82, mozjpeg: true }).toFile(optimizedJPG),
     ]);
 
-    const thumb = sharp(file).resize({ width: 420, height: 420, fit: "cover", position: "centre" });
+    const thumb = sharp(file).resize({ width: 360, height: 360, fit: "cover", position: "centre" });
     await Promise.all([
       thumb.clone().webp({ quality: 60 }).toFile(thumbWebP),
       thumb.clone().jpeg({ quality: 72, mozjpeg: true }).toFile(thumbJPG),
