@@ -673,3 +673,40 @@ code{ font-family: var(--mono); font-size: .95em; }
   }
 }
 
+
+
+/* ===== Patch v5: lightbox arrow centering + media containment ===== */
+
+/* Center the nav glyph perfectly inside the circle across browsers */
+.lightbox__nav button{
+  display: grid;
+  place-items: center;
+  padding: 0;
+  text-align: center;
+}
+
+/* Some fonts render ‹ › slightly low; nudge up a hair */
+.lightbox__nav button{
+  line-height: 1;
+}
+.lightbox__nav button::before{
+  /* no-op if buttons already contain text; avoids changing layout */
+  content: "";
+  display: none;
+}
+
+/* Make sure media can never bleed into the panel edge; keep rounded corners visible */
+.lightbox__stage{
+  box-sizing: border-box;
+  padding: 14px; /* a bit more breathing room */
+}
+
+.lightbox__media{
+  display: block;
+  box-sizing: border-box;
+  object-fit: contain;
+  max-width: calc(100% - 4px);
+  max-height: calc(100% - 4px);
+  justify-self: center;
+  align-self: center;
+}
