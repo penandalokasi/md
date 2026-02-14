@@ -35,6 +35,8 @@ jobs:
         with:
           version: 9
 
+      # We generate a minimal manifest so the repo can stay static-only.
+      # (No lockfile required.)
       - name: Create temporary package.json
         run: |
           cat > package.json <<'JSON'
@@ -51,6 +53,12 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
+      - name: Install FFmpeg (for GIF → WebM)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ffmpeg -version
 
       - name: Optimize images and rebuild index
         run: node .github/scripts/optimize-images.js
