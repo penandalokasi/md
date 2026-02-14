@@ -25,23 +25,31 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Avoid npm CLI bug: "Exit handler never called!"
-      # Use Node LTS + pnpm (via Corepack).
+      # Pin Node (LTS)
       - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Install pnpm (this makes pnpm available in PATH)
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "9.15.4"
+
+      # Now pnpm exists, so caching pnpm store works
+      - name: Enable pnpm cache
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "pnpm"
 
-      - name: Enable Corepack (pnpm)
+      - name: Show versions
         run: |
-          corepack enable
-          corepack prepare pnpm@9.15.4 --activate
-          pnpm --version
           node --version
+          pnpm --version
 
-      # Create a tiny package.json if you don't want to commit one.
-      # (If you later add your own package.json, this step will keep it.)
+      # Create a tiny manifest if you didn't commit one
       - name: Ensure deps manifest
         run: |
           if [ ! -f package.json ]; then
@@ -59,8 +67,7 @@ jobs:
           fi
 
       - name: Install dependencies (pnpm)
-        run: |
-          pnpm install --no-frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Optimize images and rebuild index
         run: node .github/scripts/optimize-images.js
