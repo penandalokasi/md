@@ -7,12 +7,16 @@
 
 const gallery = document.getElementById("gallery");
 const lightbox = document.getElementById("lightbox");
-const yearFilter = document.getElementById("yearFilter");
+const yearFilterRoot = document.getElementById("yearFilter");
+const yearBtn = document.getElementById("yearBtn");
+const yearLabel = document.getElementById("yearLabel");
+const yearMenu = document.getElementById("yearMenu");
 const countLabel = document.getElementById("countLabel");
 
 let allItems = [];
 let filteredItems = [];
 let currentIndex = 0;
+let selectedYear = "ALL";
 
 const swipeThreshold = 50;
 let touchStartX = 0;
@@ -67,7 +71,9 @@ async function loadIndex() {
     if (!allItems.length) throw new Error("No items found in index.json");
 
     buildYearFilter(allItems);
-    applyFilter("all");
+    selectedYear = "ALL";
+    if (yearLabel) yearLabel.textContent = "All years";
+    applyFiltersAndRender();
   } catch (err) {
     setStatus(err?.message ?? err);
   }
@@ -84,28 +90,71 @@ function buildYearFilter(items) {
     if (y) years.add(y);
   }
   const sorted = [...years].sort((a, b) => Number(b) - Number(a));
-
-  // reset while keeping "All"
-  yearFilter.querySelectorAll('option:not([value="all"])').forEach(o => o.remove());
-
-  for (const y of sorted) {
-    const opt = document.createElement("option");
-    opt.value = y;
-    opt.textContent = y;
-    yearFilter.appendChild(opt);
-  }
-
-  yearFilter.addEventListener("change", () => applyFilter(yearFilter.value));
+  buildYearMenu(sorted);
 }
 
-function applyFilter(year) {
-  filteredItems = (year && year !== "all")
-    ? allItems.filter(it => yearFromItem(it) === year)
+function buildYearMenu(years) {
+  if (!yearMenu || !yearBtn || !yearLabel) return;
+  yearMenu.innerHTML = "";
+
+  const addOption = (label, value) => {
+    const b = document.createElement("button");
+    b.className = "yearOption";
+    b.type = "button";
+    b.setAttribute("role", "option");
+    b.setAttribute("aria-selected", selectedYear === value ? "true" : "false");
+    b.textContent = label;
+    b.addEventListener("click", () => {
+      selectedYear = value;
+      yearLabel.textContent = label;
+      closeYearMenu();
+      applyFiltersAndRender();
+    });
+    yearMenu.appendChild(b);
+  };
+
+  addOption("All years", "ALL");
+  for (const y of years) addOption(String(y), String(y));
+
+  yearMenu.setAttribute("aria-hidden", "true");
+}
+
+function openYearMenu() {
+  if (!yearMenu || !yearBtn) return;
+  yearBtn.setAttribute("aria-expanded", "true");
+  yearMenu.setAttribute("aria-hidden", "false");
+}
+
+function closeYearMenu() {
+  if (!yearMenu || !yearBtn) return;
+  yearBtn.setAttribute("aria-expanded", "false");
+  yearMenu.setAttribute("aria-hidden", "true");
+}
+
+if (yearBtn) {
+  yearBtn.addEventListener("click", () => {
+    const open = yearMenu?.getAttribute("aria-hidden") === "false";
+    open ? closeYearMenu() : openYearMenu();
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!yearFilterRoot?.contains(e.target)) closeYearMenu();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeYearMenu();
+  });
+}
+
+function applyFiltersAndRender() {
+  filteredItems = (selectedYear !== "ALL")
+    ? allItems.filter(it => yearFromItem(it) === selectedYear)
     : [...allItems];
 
   renderGallery(filteredItems);
   countLabel.textContent = `${filteredItems.length.toLocaleString()} item${filteredItems.length === 1 ? "" : "s"}`;
 }
+
 
 /* ---------- Lazy thumbnails (including video thumbs) ---------- */
 
@@ -236,7 +285,7 @@ function openLightbox(index) {
       <div class="lightbox__bar">
         <div class="lightbox__title">
           <div class="lightbox__name" title="${escapeHtml(title)}">${escapeHtml(title)}</div>
-          <div class="lightbox__hint">Arrow keys: prev/next · Esc: close · Copy URL copies <code>images/</code> original</div>
+          <div class="lightbox__hint">←/→ navigate · Esc close · Copy URL copies original link</div>
         </div>
         <div class="lightbox__actions">
           <button class="btn btn--primary" id="lbCopy">Copy URL</button>
