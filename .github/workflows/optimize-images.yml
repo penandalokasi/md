@@ -1,46 +1,56 @@
-name: Optimize and Generate Thumbnails
+name: Process images (optimize + thumbs + index)
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - "images/**"
-  workflow_dispatch:
+      - ".github/scripts/**"
+      - ".github/workflows/process-images.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: process-images-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  optimize:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repository
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      # 2. Install full FFmpeg
-      - name: Install FFmpeg
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
-          ffmpeg -version
-
-      # 3. Set up Node.js (no caching)
-      - name: Set up Node.js
+      # Pin Node to avoid npm CI bugs like "Exit handler never called!"
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: "20"
+          cache: "npm"
 
-      # 4. Install dependencies (Sharp + glob)
+      # Workaround for flaky npm versions on runners
+      - name: Pin npm
+        run: npm i -g npm@10
+
       - name: Install dependencies
-        run: npm install sharp glob
+        run: npm install --no-audit --no-fund sharp glob
 
-      # 5. Run your optimization script
-      - name: Run image optimization script
+      - name: Optimize images and rebuild index
         run: node .github/scripts/optimize-images.js
 
-      # 6. Commit optimized outputs
-      - name: Commit optimized results
+      - name: Commit generated assets (if changed)
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add images-optimized images-thumbs index.json || true
-          git commit -m "Optimize images & generate thumbnails [skip ci]" || echo "No changes to commit"
-          git push
+          set -e
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "chore: update optimized images"
+            git push
+          else
+            echo "No changes to commit."
+          fi
