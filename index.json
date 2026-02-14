@@ -1,0 +1,84 @@
+[
+  {
+    "original": "images/2026-02-14.06.jpg",
+    "optimized": {
+      "webp": "images-optimized/2026-02-14.06.webp",
+      "jpg": "images-optimized/2026-02-14.06.jpg"
+    },
+    "thumbnail": {
+      "webp": "images-thumbs/2026-02-14.06.webp",
+      "jpg": "images-thumbs/2026-02-14.06.jpg"
+    },
+    "format": "image"
+  },
+  {
+    "original": "images/2026-02-14.03.jpg",
+    "optimized": {
+      "webp": "images-optimized/2026-02-14.03.webp",
+      "jpg": "images-optimized/2026-02-14.03.jpg"
+    },
+    "thumbnail": {
+      "webp": "images-thumbs/2026-02-14.03.webp",
+      "jpg": "images-thumbs/2026-02-14.03.jpg"
+    },
+    "format": "image"
+  },
+  {
+    "original": "images/2026-02-14.02.jpg",
+    "optimized": {
+      "webp": "images-optimized/2026-02-14.02.webp",
+      "jpg": "images-optimized/2026-02-14.02.jpg"
+    },
+    "thumbnail": {
+      "webp": "images-thumbs/2026-02-14.02.webp",
+      "jpg": "images-thumbs/2026-02-14.02.jpg"
+    },
+    "format": "image"
+  },
+  {
+    "original": "images/2025-12-22.01.png",
+    "optimized": {
+      "webp": "images-optimized/2025-12-22.01.webp",
+      "jpg": "images-optimized/2025-12-22.01.jpg"
+    },
+    "thumbnail": {
+      "webp": "images-thumbs/2025-12-22.01.webp",
+      "jpg": "images-thumbs/2025-12-22.01.jpg"
+    },
+    "format": "image"
+  },
+  {
+    "original": "images/2025-12-16.01.png",
+    "optimized": {
+      "webp": "images-optimized/2025-12-16.01.webp",
+      "jpg": "images-optimized/2025-12-16.01.jpg"
+    },
+    "thumbnail": {
+      "webp": "images-thumbs/2025-12-16.01.webp",
+      "jpg": "images-thumbs/2025-12-16.01.jpg"
+    },
+    "format": "image"
+  },
+  {
+    "original": "images/2025-05-12.01.png",
+    "optimized": {
+      "webp": "images-optimized/2025-05-12.01.webp",
+      "jpg": "images-optimized/2025-05-12.01.jpg"
+    },
+    "thumbnail": {
+      "webp": "images-thumbs/2025-05-12.01.webp",
+      "jpg": "images-thumbs/2025-05-12.01.jpg"
+    },
+    "format": "image"
+  },
+  {
+    "original": "images/2025-12-30.01.gif",
+    "optimized": {
+      "webm": "images-optimized/2025-12-30.01.webm"
+    },
+    "thumbnail": {
+      "webm": "images-thumbs/2025-12-30.01.webm"
+    },
+    "format": "webm"
+  }
+]
