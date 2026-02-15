@@ -59,9 +59,22 @@
 }
 
 *{ box-sizing: border-box; }
-html, body{
-  min-height:100%;
+
+html{
+  height: 100%;
+  background: radial-gradient(1200px 700px at 10% -10%, rgba(99,102,241,25), transparent 55%),
+              radial-gradient(900px 500px at 90% 0%, rgba(16,185,129,20), transparent 55%),
+              var(--bg);
 }
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family: var(--font);
+  color: var(--text);
+  background: transparent;
+}
+
 
 /* Prevent background scroll when the lightbox is open */
 html.modal-open,
