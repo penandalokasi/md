@@ -695,22 +695,32 @@ code{ font-family: var(--mono); font-size: .95em; }
 
 /* ===== Absolute final lightbox centering fix ===== */
 
-/* True centering for stage */
+/* Make the panel’s content area a definite height so 100% works */
+.lightbox__panel{
+  height: min(92vh, 900px);   /* was max-height */
+  max-height: none;
+}
+
+/* Stage fills the remaining row and centers content */
 .lightbox__stage{
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  position: relative;
+  min-height: 0;
+  padding: 16px;             /* your breathing room lives here */
 }
 
-/* Media must not touch panel edges and must stay centered */
+/* Media fits the stage box (so tall images fit to height) */
 .lightbox__media{
-  display: block;
-  margin: auto;
-  max-width: calc(100% - 32px);
-  max-height: calc(100% - 32px);
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
+  display: block;
+  margin: 0;
 }
+
 
 /* Nav arrows must not influence layout */
 .lightbox__nav{
