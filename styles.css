@@ -427,25 +427,24 @@ code{ font-family: var(--mono); font-size: .95em; }
   background: transparent;
 }
 
+/* ===== Lightbox media sizing fix ===== */
 .lightbox__stage{
-  position:relative;
-  display:grid;
-  place-items:center;
-  /* breathing room so media never visually eats the rounded panel corner */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
   padding: 16px;
-  overflow:hidden;
   min-height: 0;
 }
+
 .lightbox__media{
-  /* keep media comfortably inside the panel */
-  max-width: calc(100% - 24px);
-  max-height: calc(100% - 24px);
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
   width: auto;
   height: auto;
   object-fit: contain;
-  display:block;
-  border-radius: 16px;
-  background: rgba(0,0,0,.12);
+  margin: 0;
 }
 
 /* Navigation affordances */
@@ -596,17 +595,6 @@ code{ font-family: var(--mono); font-size: .95em; }
 /* 3) Media sizing: ensure tall/square images fit comfortably with no scrollbars */
 .lightbox__stage{
   padding: 12px;
-}
-.lightbox__media{
-  max-width: min(96vw, 1040px);
-  max-height: calc(min(92vh, 900px) - 120px); /* panel max-height minus top bar/padding */
-  object-fit: contain;
-}
-@media (max-width: 640px){
-  .lightbox__media{
-    max-width: 94vw;
-    max-height: calc(92vh - 150px);
-  }
 }
 
 /* ===== Lightbox tweaks (v3) ===== */
