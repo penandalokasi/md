@@ -59,7 +59,9 @@
 }
 
 *{ box-sizing: border-box; }
-html, body{ height:100%; }
+html, body{
+  min-height:100%;
+}
 
 /* Prevent background scroll when the lightbox is open */
 html.modal-open,
