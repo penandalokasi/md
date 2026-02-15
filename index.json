@@ -1,5 +1,17 @@
 [
   {
+    "original": "images/2026-02-15.01.png",
+    "optimized": {
+      "webp": "images-optimized/2026-02-15.01.webp",
+      "jpg": "images-optimized/2026-02-15.01.jpg"
+    },
+    "thumbnail": {
+      "webp": "images-thumbs/2026-02-15.01.webp",
+      "jpg": "images-thumbs/2026-02-15.01.jpg"
+    },
+    "format": "image"
+  },
+  {
     "original": "images/2026-02-14.03.jpg",
     "optimized": {
       "webp": "images-optimized/2026-02-14.03.webp",
