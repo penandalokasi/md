@@ -693,34 +693,42 @@ code{ font-family: var(--mono); font-size: .95em; }
   }
 }
 
-/* ===== Absolute final lightbox centering fix ===== */
+/* ===== Lightbox sizing fix (definitive, overrides earlier rules) =====
+   Goal: Tall images must fit to HEIGHT (no cropping), still centered, and keep rounded corners.
+   Also: keep the panel fully inside the viewport (account for .lightbox padding: 18px top/bottom).
+*/
 
-/* Make the panel’s content area a definite height so 100% works */
+/* Panel must never exceed viewport height (minus overlay padding) */
 .lightbox__panel{
-  height: min(92vh, 900px);   /* was max-height */
+  height: min(calc(100vh - 36px), 900px);
   max-height: none;
 }
 
-/* Stage fills the remaining row and centers content */
+/* Stage is the sizing box for media */
 .lightbox__stage{
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   min-height: 0;
-  padding: 16px;             /* your breathing room lives here */
+  padding: 16px;
+  overflow: hidden;
 }
 
-/* Media fits the stage box (so tall images fit to height) */
+/* Media fits stage — tall images shrink by height, wide images shrink by width */
 .lightbox__media{
   max-width: 100%;
   max-height: 100%;
   width: auto;
   height: auto;
   object-fit: contain;
+
   display: block;
   margin: 0;
-}
 
+  /* keep the nice "card" look */
+  border-radius: 16px;
+  background: rgba(0,0,0,.12);
+}
 
 /* Nav arrows must not influence layout */
 .lightbox__nav{
