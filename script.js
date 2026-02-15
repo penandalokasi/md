@@ -22,6 +22,9 @@ const swipeThreshold = 50;
 let touchStartX = 0;
 let touchStartY = 0;
 
+// Lightbox focus management (restore focus after closing)
+let lastActiveEl = null;
+
 /* ---------- Utilities ---------- */
 
 function absUrl(relativePath) {
@@ -102,11 +105,13 @@ function buildYearMenu(years) {
     b.className = "yearOption";
     b.type = "button";
     b.setAttribute("role", "option");
+    b.dataset.value = value;
     b.setAttribute("aria-selected", selectedYear === value ? "true" : "false");
     b.textContent = label;
     b.addEventListener("click", () => {
       selectedYear = value;
       yearLabel.textContent = label;
+      updateYearOptionSelection();
       closeYearMenu();
       applyFiltersAndRender();
     });
@@ -119,10 +124,23 @@ function buildYearMenu(years) {
   yearMenu.setAttribute("aria-hidden", "true");
 }
 
+function updateYearOptionSelection() {
+  if (!yearMenu) return;
+  for (const opt of yearMenu.querySelectorAll(".yearOption")) {
+    const v = opt.dataset.value;
+    opt.setAttribute("aria-selected", v === selectedYear ? "true" : "false");
+  }
+}
+
 function openYearMenu() {
   if (!yearMenu || !yearBtn) return;
   yearBtn.setAttribute("aria-expanded", "true");
   yearMenu.setAttribute("aria-hidden", "false");
+
+  // Focus the selected option for easier keyboard use.
+  const opts = [...yearMenu.querySelectorAll(".yearOption")];
+  const selected = opts.find(o => o.dataset.value === selectedYear) || opts[0];
+  selected?.focus?.({ preventScroll: true });
 }
 
 function closeYearMenu() {
@@ -158,21 +176,47 @@ function applyFiltersAndRender() {
 
 /* ---------- Lazy thumbnails (including video thumbs) ---------- */
 
-const io = new IntersectionObserver((entries) => {
-  for (const e of entries) {
-    if (!e.isIntersecting) continue;
-    const el = e.target;
-    const src = el.getAttribute("data-src");
-    if (src) el.setAttribute("src", src);
-    el.removeAttribute("data-src");
-    io.unobserve(el);
-  }
-}, { rootMargin: "250px 0px" });
+const supportsIO = typeof IntersectionObserver !== "undefined";
+
+const io = supportsIO
+  ? new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const el = e.target;
+      const src = el.getAttribute("data-src");
+      if (src) {
+        el.setAttribute("src", src);
+
+        // Some browsers need an explicit load/play after setting src on <video>.
+        if (el.tagName === "VIDEO") {
+          try { el.load?.(); } catch {}
+          try { el.play?.().catch?.(() => {}); } catch {}
+        }
+      }
+      el.removeAttribute("data-src");
+      io.unobserve(el);
+    }
+  }, { rootMargin: "250px 0px" })
+  : null;
 
 function observeLazy(el) {
   // Native lazy-load for <img> is fine; we mainly need this for <video>.
   if (!el) return;
-  if (el.tagName === "VIDEO") io.observe(el);
+  if (el.tagName !== "VIDEO") return;
+
+  // Fallback for browsers without IntersectionObserver
+  if (!supportsIO) {
+    const src = el.getAttribute("data-src");
+    if (src) {
+      el.setAttribute("src", src);
+      el.removeAttribute("data-src");
+      try { el.load?.(); } catch {}
+      try { el.play?.().catch?.(() => {}); } catch {}
+    }
+    return;
+  }
+
+  io.observe(el);
 }
 
 /* ---------- Gallery ---------- */
@@ -194,6 +238,7 @@ function createCard(item, index) {
     const video = document.createElement("video");
     // lazy: use data-src and IntersectionObserver
     video.setAttribute("data-src", item.thumbnail?.webm ?? "");
+    video.preload = "none";
     video.autoplay = true;
     video.loop = true;
     video.muted = true;
@@ -272,6 +317,8 @@ function toastButton(btn, text) {
 /* ---------- Lightbox ---------- */
 
 function openLightbox(index) {
+  lastActiveEl = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
   currentIndex = index;
 
   const item = filteredItems[currentIndex];
@@ -322,6 +369,9 @@ function openLightbox(index) {
 
   lightbox.classList.remove("hidden");
 
+  // Prevent background scroll while the modal is open.
+  document.documentElement.classList.add("modal-open");
+
   // Focus close button for accessibility
   document.getElementById("lbClose").focus({ preventScroll: true });
 }
@@ -371,6 +421,14 @@ function closeLightbox() {
   document.removeEventListener("keydown", onKeyDown);
   lightbox.removeEventListener("touchstart", onTouchStart);
   lightbox.removeEventListener("touchend", onTouchEnd);
+
+  document.documentElement.classList.remove("modal-open");
+
+  // Restore focus to wherever the user was.
+  if (lastActiveEl && lastActiveEl.isConnected) {
+    try { lastActiveEl.focus({ preventScroll: true }); } catch {}
+  }
+  lastActiveEl = null;
 }
 
 function onBackdropClick(e) {
