@@ -793,3 +793,30 @@ code{ font-family: var(--mono); font-size: .95em; }
   place-items: center;
   padding: 0;
 }
+
+/* ===== Mobile viewport-safe lightbox spacing =====
+   On mobile browsers, 100vh can include the URL/nav bars, making the lightbox touch top/bottom.
+   Use dynamic/small viewport units when available and add safe-area insets.
+*/
+:root{ --lb-vh: 100vh; }
+@supports (height: 100dvh){ :root{ --lb-vh: 100dvh; } }
+@supports (height: 100svh){ :root{ --lb-vh: 100svh; } } /* prefer "small" viewport if supported */
+
+/* Add breathing room for notches/home indicator */
+.lightbox{
+  padding-top: calc(18px + env(safe-area-inset-top));
+  padding-bottom: calc(18px + env(safe-area-inset-bottom));
+  padding-left: calc(18px + env(safe-area-inset-left));
+  padding-right: calc(18px + env(safe-area-inset-right));
+}
+
+/* Keep panel inside the safe viewport */
+.lightbox__panel{
+  height: min(calc(var(--lb-vh) - 36px), 900px);
+}
+
+/* Constrain media using the safe viewport height too */
+.lightbox__stage img.lightbox__media,
+.lightbox__stage video.lightbox__media{
+  max-height: calc(min(900px, calc(var(--lb-vh) - 36px)) - 88px) !important;
+}
