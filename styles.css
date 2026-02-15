@@ -742,53 +742,54 @@ code{ font-family: var(--mono); font-size: .95em; }
   padding: 0;
 }
 
-/* ===== Lightbox media wrapper fix (picture/video) =====
-   Your JS inserts <picture><img class="lightbox__media"></picture> into .lightbox__stage.
-   If the wrapper (<picture>) isn't constrained, %/auto sizing on the <img> can "fit to width"
-   and ignore height limits. Constrain the wrapper and the actual media.
-*/
 
-.lightbox__panel{
-  /* keep panel inside viewport, accounting for .lightbox padding (18px) */
-  height: min(calc(100vh - 36px), 900px);
-  max-height: none;
-}
+/* ===== FINAL OVERRIDE: Lightbox tall-image fit-by-height (robust, no % heights) =====
+   This avoids percentage max-height (which can resolve unpredictably) by directly constraining
+   media with viewport math that matches your layout:
+   - .lightbox padding: 18px top/bottom + left/right => 36px total per axis
+   - .lightbox__top: 56px
+   - .lightbox__stage padding: 16px => 32px total per axis
+   Available media height = min(900px, 100vh - 36px) - (56px + 32px) = min(900px, 100vh - 36px) - 88px
+*/
 
 .lightbox__stage{
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-height: 0;
-  padding: 16px;
   overflow: hidden;
 }
 
-/* Constrain wrapper */
 .lightbox__stage picture{
   display: flex;
   align-items: center;
   justify-content: center;
   max-width: 100%;
   max-height: 100%;
-  margin: 0;
 }
 
-/* Constrain actual media (img/video) */
+/* Apply to images AND videos */
 .lightbox__stage img.lightbox__media,
 .lightbox__stage video.lightbox__media{
-  display: block;
-  max-width: 100% !important;
-  max-height: 100% !important;
+  display: block !important;
+
   width: auto !important;
   height: auto !important;
+
+  /* Fit-by-height for tall media, fit-by-width for wide media */
+  max-height: calc(min(900px, calc(100vh - 36px)) - 88px) !important;
+  max-width: min(1040px, calc(100vw - 68px)) !important;
+
   object-fit: contain !important;
 
   border-radius: 16px;
   background: rgba(0,0,0,.12);
 }
 
-/* If any older rules set vh-based width/height, this ensures they lose */
-.lightbox__media{
-  max-width: 100% !important;
-  max-height: 100% !important;
+/* Keep nav clickability */
+.lightbox__nav{ pointer-events: none; }
+.lightbox__nav button{
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  padding: 0;
 }
