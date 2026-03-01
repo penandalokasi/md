@@ -288,6 +288,16 @@
     "format": "image"
   },
   {
+    "original": "images/2026-03-01.03.gif",
+    "optimized": {
+      "webm": "images-optimized/2026-03-01.03.webm"
+    },
+    "thumbnail": {
+      "webm": "images-thumbs/2026-03-01.03.webm"
+    },
+    "format": "webm"
+  },
+  {
     "original": "images/2026-01-29.02.gif",
     "optimized": {
       "webm": "images-optimized/2026-01-29.02.webm"
